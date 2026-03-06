@@ -49,7 +49,7 @@ Ebright IT & Administration Team
 | Time | Session Type | Module | Key Focus |
 | --- | --- | --- | --- |
 | 09:00 - 09:45 | Lecture | [Module 1: Introduction, Fundamentals & Remote Access](Lecture%20Guide%20-%20Module%201.md) | Ecosystem (GUI vs CLI), Cloud/VPS theory, and SSH handshake/security. |
-| 09:45 - 10:30 | Practical | [Module 1: Introduction, Fundamentals & Remote Access](Practical%20Guide%20-%20Module%201.md) | Docker sandbox setup, system verification, and SSH key generation. |
+| 09:45 - 10:30 | Practical | [Module 1: Introduction, Fundamentals & Remote Access](Practical%20Guide%20-%20Module%201.md) | Docker sandbox setup, Dockerfile + Compose basics, system verification, and SSH key generation/testing. |
 | 10:30 - 10:45 | Break | - | Morning coffee break. |
 | 10:45 - 12:00 | Lecture | [Module 2: Mastering the Filesystem, Users & Permissions](Lecture%20Guide%20-%20Module%202.md) | The 8 core topics: FHS, security logic, productivity, and network operations. |
 | 12:00 - 13:00 | Practical | [Module 2: Mastering the Filesystem, Users & Permissions](Practical%20Guide%20-%20Module%202.md) | Hands-on: Building Ebright's hierarchy, permissions, and automation. |

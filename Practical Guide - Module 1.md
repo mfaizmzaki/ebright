@@ -172,41 +172,44 @@ Checkpoint:
 - You can see both `id_rsa` and `id_rsa.pub` in the file list.
 
 ## Lab 5 (Optional): Enable SSH in the Docker Sandbox
-Yes, SSH can be enabled in Docker for practice. This is useful for training, but not required for normal Docker workflows.
+Yes, SSH can be enabled in Docker for practice. In this lab, you will also learn how to use a `Dockerfile` and Docker Compose.
 
 Important notes:
 - For day-to-day container management, `docker exec` is usually preferred over SSH.
 - This lab is for learning remote access flow in a safe local sandbox.
+- We will use files in the `asset` folder to build a custom image.
 
-### Task 5.1: Recreate Container with SSH Port Mapping
-SSH needs port mapping from Windows to container.
+### Task 5.1: Understand the Project Files
+This repo now includes:
+- `asset/Dockerfile`: builds an Ubuntu image with SSH enabled.
+- `docker-compose.yml`: starts the container and maps `localhost:2222` to container port `22`.
 
-In Windows PowerShell, run:
+Open `asset/Dockerfile` and note:
+- `openssh-server` is installed.
+- A user named `trainee` is created.
+- Password login is enabled for training.
+- SSH daemon starts in foreground using `sshd -D`.
+
+### Task 5.2: Build and Start with Docker Compose
+In Windows PowerShell (from project root), run:
 
 ```bash
-docker rm -f ebright-practice
-docker run -it --name ebright-practice -p 2222:22 ubuntu bash
+docker compose up -d --build
 ```
 
 Why this matters:
-- `-p 2222:22` maps Windows port `2222` to container SSH port `22`.
+- `--build` builds the image from `asset/Dockerfile`.
+- Compose reads `docker-compose.yml` and applies consistent settings.
 
-### Task 5.2: Install and Start SSH Server in Container
-Inside the Linux container prompt, run:
+Verification:
 
 ```bash
-apt update
-apt install -y openssh-server
-mkdir -p /run/sshd
-useradd -m -s /bin/bash trainee
-echo "trainee:ebright123!" | chpasswd
-sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
-sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
-/usr/sbin/sshd
+docker compose ps
 ```
 
-Checkpoint:
-- Run `ss -tulpen | grep :22` and confirm SSH is listening on port 22.
+Expected result:
+- Service `ebright-practice-ssh` is `Up`.
+- Port mapping shows `0.0.0.0:2222->22/tcp`.
 
 ### Task 5.3: Test SSH Login from Windows
 Open a new Windows PowerShell window and run:
@@ -255,10 +258,25 @@ ssh trainee@localhost -p 2222
 
 If your key is loaded and recognized, login should work without password prompt.
 
+### Task 5.5: Practice Compose Lifecycle Commands
+Run these commands to understand service lifecycle:
+
+```bash
+docker compose stop
+docker compose start
+docker compose down
+```
+
+What each command does:
+- `stop`: stops running container but keeps it for later.
+- `start`: starts stopped container again.
+- `down`: removes container and network created by Compose.
+
 ## Lab Summary and Cleanup
 - To exit the Sandbox: `exit`
-- To restart the Sandbox later: `docker start -ai ebright-practice`
-- To remove the Sandbox entirely: `docker rm -f ebright-practice`
+- To start services with Compose: `docker compose up -d`
+- To stop services without removing: `docker compose stop`
+- To remove all Compose resources: `docker compose down`
 
 ## Troubleshooting (Common Beginner Issues)
 1. `docker: command not found` in PowerShell.
@@ -282,8 +300,8 @@ If your key is loaded and recognized, login should work without password prompt.
 - Rule: If your prompt starts with `PS C:\Users\...`, you are in Windows PowerShell.
 
 6. SSH connection refused on `localhost:2222`.
-- Cause: Container was started without `-p 2222:22`, or `sshd` is not running.
-- Fix: Recreate container with `-p 2222:22`, then start SSH server with `/usr/sbin/sshd`.
+- Cause: Compose service is not running, port mapping failed, or build did not complete.
+- Fix: Run `docker compose up -d --build`, then check `docker compose ps`.
 
 ## Troubleshooting: If Docker Desktop Fails to Start
 Common issues for Windows users are often related to system settings called virtualization.

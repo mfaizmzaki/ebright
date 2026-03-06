@@ -1,0 +1,8 @@
+services:
+  ebright-practice-ssh:
+    build:
+      context: ./asset
+      dockerfile: Dockerfile
+    container_name: ebright-practice-ssh
+    ports:
+      - "2222:22"

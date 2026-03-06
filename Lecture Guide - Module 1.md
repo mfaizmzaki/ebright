@@ -4,7 +4,7 @@
 
 **Session Duration:** 2 to 3 hours  
 **Delivery Mode:** Instructor-led with live terminal demos  
-**Tools:** Ubuntu Server (or Docker Ubuntu container), terminal, SSH client
+**Tools:** Ubuntu Server (or Docker Ubuntu container), Dockerfile, Docker Compose, terminal, SSH client
 
 ## Learning Outcomes
 By the end of this module, learners should be able to:
@@ -13,6 +13,7 @@ By the end of this module, learners should be able to:
 - Describe VPS architecture and shared responsibility in cloud environments.
 - Identify the role of the kernel, shell, and user commands in Linux execution.
 - Distinguish Docker containers from virtual machines.
+- Explain the role of a Dockerfile and Docker Compose in repeatable lab environments.
 - Explain how SSH key-based authentication works.
 - Demonstrate safe first-step server mindset behaviors.
 
@@ -145,12 +146,18 @@ This topic clarifies where to practice safely and how to choose the right isolat
 ### 4.4 Demo Commands
 
 ```bash
-docker ps
-docker run -it --name ebright-lab ubuntu:22.04 bash
+docker compose up -d --build
+docker compose ps
+docker exec -it ebright-practice-ssh bash
 cat /etc/os-release
 exit
-docker rm -f ebright-lab
+docker compose down
 ```
+
+Talking points:
+- `Dockerfile` defines the image build instructions.
+- `docker-compose.yml` defines runtime configuration like ports and service names.
+- Compose improves consistency for classroom labs compared to one-off commands.
 
 ## 5. Remote Access Theory: SSH & Security Protocols
 
@@ -249,5 +256,6 @@ Success criteria:
 - VPS gives Ebright full control and full operational responsibility at OS level.
 - Kernel executes, shell translates, and user intent drives system behavior.
 - Docker provides a safe training sandbox.
+- Dockerfile and Docker Compose make sandbox setup repeatable and team-friendly.
 - SSH with key-based auth is foundational for secure remote operations.
 - A strong server mindset is careful, minimal, and documented.

@@ -11,6 +11,8 @@ By the end of this practical session, learners should be able to:
 - Verify Linux kernel and shell basics.
 - Explain case sensitivity and Linux command feedback behavior.
 - Generate SSH key pairs on Windows and identify private/public keys.
+- Explain how a `Dockerfile` and `docker-compose.yml` create a repeatable SSH training environment.
+- Start, verify, and stop a Compose service used for SSH testing.
 
 ## Suggested Session Timeline
 1. Orientation and setup expectations: 5 to 10 minutes
@@ -19,7 +21,8 @@ By the end of this practical session, learners should be able to:
 4. Lab 2 System fundamentals: 10 minutes
 5. Lab 3 Server mindset drills: 10 to 15 minutes
 6. Lab 4 SSH key generation: 10 to 15 minutes
-7. Wrap-up and Q&A: 5 minutes
+7. Lab 5 Optional Compose + SSH lab: 15 to 20 minutes
+8. Wrap-up and Q&A: 5 minutes
 
 ## Instructor Runbook
 
@@ -128,18 +131,61 @@ Security emphasis:
 - Never share `id_rsa`.
 - `id_rsa.pub` is safe to upload to server.
 
-### 7. Wrap-Up and Exit (5 min)
+### 7. Lab 5 Optional: Dockerfile + Compose SSH Lab (15 to 20 min)
+Trainer setup note:
+- This lab teaches image build (`Dockerfile`) and service orchestration (`docker-compose.yml`) while validating SSH access.
+
+Learner action (from project root):
+```bash
+docker compose up -d --build
+docker compose ps
+```
+
+Expected outcome:
+- Service `ebright-practice-ssh` is `Up`.
+- Port mapping includes `0.0.0.0:2222->22/tcp`.
+
+SSH verification from Windows PowerShell:
+```bash
+ssh trainee@localhost -p 2222
+```
+
+Expected login flow:
+- Learner types `yes` for first host-key prompt.
+- Learner enters password `ebright123!`.
+- Prompt becomes `trainee@<container-id>:$`.
+
+Optional key-based flow:
+```bash
+type $HOME\.ssh\id_rsa.pub
+```
+- Copy key text and paste into container user `~/.ssh/authorized_keys`.
+- Set permissions `700` for `.ssh` and `600` for `authorized_keys`.
+
+Compose lifecycle drill:
+```bash
+docker compose stop
+docker compose start
+docker compose down
+```
+
+Teaching cues:
+- `Dockerfile` = how image is built.
+- Compose file = how service runs (ports, name, build context).
+- Repeatability: all learners run the same environment with one command.
+
+### 8. Wrap-Up and Exit (5 min)
 Learner action:
 ```bash
 exit
-docker start -ai ebright-practice
-docker rm -f ebright-practice
+docker compose stop
+docker compose down
 ```
 
 Trainer note:
-- Explain the difference between restart and remove.
-- Restart keeps previous lab state.
-- Remove deletes the sandbox completely.
+- Explain `stop` vs `down` in Compose.
+- `stop` keeps resources for quick restart.
+- `down` removes created resources for clean reset.
 
 ## Live Monitoring Checklist for Trainer
 - Learner can identify terminal context correctly.
@@ -147,6 +193,8 @@ Trainer note:
 - Learner can run and explain `uname -sr` and `echo $SHELL`.
 - Learner confirms case-sensitive filename behavior.
 - Learner successfully generates SSH keys and identifies both files.
+- Learner can run `docker compose up -d --build` and confirm service is `Up`.
+- Learner can SSH to `localhost:2222` successfully.
 
 ## Fast Troubleshooting Card (Instructor Use)
 1. Docker command not recognized
@@ -158,13 +206,20 @@ Trainer note:
 - Reboot and reopen Docker Desktop.
 
 3. Existing container name conflict
-- Use `docker start -ai ebright-practice`.
+- If using old flow, remove stale container; for new flow, use `docker compose down` then `docker compose up -d --build`.
 
 4. SSH command not found
 - Use latest Windows 10/11 with OpenSSH Client feature enabled.
 
 5. Learner ran SSH keygen inside container
 - Stop and rerun in Windows PowerShell.
+
+6. SSH connection refused on `localhost:2222`
+- Verify service status using `docker compose ps`.
+- Rebuild and restart using `docker compose up -d --build`.
+
+7. Learner runs Compose in wrong folder
+- Ensure terminal path is project root where `docker-compose.yml` exists.
 
 ## Optional Extension (If Time Allows)
 - Show learners how to display public key content:
