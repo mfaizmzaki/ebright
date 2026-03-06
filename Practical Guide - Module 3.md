@@ -1,6 +1,6 @@
 # Practical Guide | Module 3: Deployment, Security & Continuity
 
-**Objective:** To execute a safe deployment workflow for the Ebright Parent Portal, monitor live server health, harden network access, and practice continuity operations.
+**Objective:** To execute a safe deployment workflow for the Ebright application, monitor live server health, harden network access, and practice continuity operations.
 
 **Target Audience:** Beginner to intermediate learners who completed Modules 1 and 2.
 
@@ -13,7 +13,7 @@ By the end of this practical, you will complete a realistic operations routine:
 - Validate server health (disk, memory, CPU, load).
 - Investigate logs for service and authentication issues.
 - Manage Nginx with safe config testing and reload.
-- Perform a Git-style deployment update workflow.
+- Perform a Git-style deployment update workflow (and optionally a Docker image build/push/pull workflow).
 - Verify DNS routing behavior.
 - Apply baseline UFW firewall hardening rules.
 - Run a controlled maintenance command and cancellation.
@@ -27,6 +27,7 @@ Required tools:
 - `git`
 - `ufw`
 - `dnsutils` (`dig` command)
+- **Docker** (for Lab 5B and Lab 9; install separately if needed)
 
 Quick install if needed:
 
@@ -203,8 +204,12 @@ sudo systemctl status nginx --no-pager
 Checkpoint:
 - Nginx is `active (running)` and enabled at boot.
 
-## Lab 5: Git-Based Deployment Workflow (12-15 min)
-Simulate a real deployment routine.
+## Lab 5: Git-Based Deployment & Branching Workflow (12-15 min)
+Simulate a real deployment routine, including how Git branching supports collaborative work.
+
+Conceptual roles (even if you run everything on one Ubuntu host for this lab):
+- **Developer machine**: where you create feature branches and open Pull Requests.
+- **Deployment server**: where you only pull from a reviewed `main` (or `release`) branch before serving traffic.
 
 ### Task 5.1: Prepare Deployment Directory
 
@@ -229,15 +234,43 @@ cd /var/www/html
 git status
 ```
 
-### Task 5.3: Safe Update Routine
+### Task 5.3: Branching for Collaborative Changes (Developer Machine Concept)
+Conceptually, this is work done on a **developer machine** (your laptop in real life). In this lab, you are simulating it on the same Ubuntu host:
 
 ```bash
+cd /var/www/html
+git branch
+git checkout -b feature/training-update
+git branch
+git status
+```
+
+Discussion prompts (trainer or self-reflection):
+- How would two teammates each use their own feature branches before merging into `main`?
+- Why is it safer to deploy only from a reviewed and tested branch like `main` instead of directly from personal branches?
+
+### Task 5.4: Simulated Merge / Pull Request Review (Developer Machine Concept)
+In a real team, feature branches are merged into `main` via a Pull Request (PR) on a Git hosting platform (e.g., GitHub). Conceptually, this still happens on the **developer side**, not on the deployment server. For this lab, you will **simulate** that workflow locally before deploying:
+
+```bash
+cd /var/www/html
+git checkout main
+git merge --no-ff feature/training-update
+git log --oneline -n 5
+git branch
+```
+
+### Task 5.5: Safe Update Routine (From Main, Deployment Server Concept)
+Now simulate the **deployment server** pulling the latest, already-reviewed `main` branch:
+
+```bash
+cd /var/www/html
 git status
 git log --oneline -n 5
 git pull
 ```
 
-### Task 5.4: Post-Deploy Verification
+### Task 5.6: Post-Deploy Verification
 
 ```bash
 sudo systemctl status nginx --no-pager
@@ -246,6 +279,86 @@ curl -I http://localhost
 
 Checkpoint:
 - You can explain why `git status` is checked before `git pull`.
+- You can describe how feature branches allow multiple collaborators to work without breaking the shared deployment branch.
+- You can outline the basic steps of a merge / pull request workflow from feature branch into `main`.
+
+## Lab 5B: Docker Image Deployment (Alternative to Git Pull) (12-15 min)
+In this lab you use **Docker images** instead of `git pull` on the server: the **developer** builds and pushes an image to a registry; the **deployment server** only pulls and runs the image. No Git is needed on the server.
+
+Conceptual roles (same as Lab 5):
+- **Developer machine**: build the image from app source, tag it, push to a registry (e.g. Docker Hub or GitHub Container Registry).
+- **Deployment server**: pull the image from the registry and run it (no clone/pull of source code).
+
+Prerequisites:
+- Docker installed on both sides (or one host playing both roles).
+- A registry account (e.g. [Docker Hub](https://hub.docker.com)) for push/pull.
+
+### Task 5B.1: Build the Image (Developer Machine Concept)
+From a machine that has the app source (e.g. the cloned ebright repo), build the image. From the **ebright repository root**:
+
+```bash
+cd asset/module3/deploy
+docker build -t docker.io/ebright-training/module3-portal:latest .
+docker images | grep module3-portal
+```
+
+Verification: Image appears in `docker images` with the correct tag.
+
+### Task 5B.2: Push the Image to a Registry (Developer Machine Concept)
+Push the tagged image so the deployment server can pull it:
+
+```bash
+docker login
+docker push docker.io/ebright-training/module3-portal:latest
+```
+
+Use your registry username and password (or token). This module standard uses `docker.io/ebright-training/module3-portal:latest`.
+
+### Task 5B.3: Pull and Run the Image (Deployment Server Concept)
+On the **deployment server** (or the same host simulating it), pull the image and run a container. No Git or source code is required here:
+
+```bash
+docker pull docker.io/ebright-training/module3-portal:latest
+docker run -d --name ebright-portal -p 8888:80 docker.io/ebright-training/module3-portal:latest
+docker ps | grep ebright-portal
+```
+
+### Task 5B.4: Verify the Deployed Container
+
+```bash
+curl -I http://localhost:8888
+curl http://localhost:8888 | head -n 5
+```
+
+### Task 5B.5: Optional Alternative (No Registry) - Save + Transfer with SCP
+Use this when the server cannot access a registry (e.g. offline / restricted environment).
+
+On the **developer machine**:
+
+```bash
+docker save -o module3-portal-latest.tar docker.io/ebright-training/module3-portal:latest
+scp module3-portal-latest.tar user@SERVER_IP:/tmp/
+```
+
+On the **deployment server**:
+
+```bash
+docker load -i /tmp/module3-portal-latest.tar
+docker run -d --name ebright-portal -p 8888:80 docker.io/ebright-training/module3-portal:latest
+docker ps | grep ebright-portal
+```
+
+Checkpoint:
+- You can explain why the server only runs `docker pull` and `docker run`, not `git pull`.
+- You can name one benefit of image-based deployment (e.g. same runtime everywhere, no build on server).
+- You can describe when to use registry-based pull vs manual `scp` transfer.
+
+Optional cleanup:
+
+```bash
+docker stop ebright-portal
+docker rm ebright-portal
+```
 
 ## Lab 6: DNS Validation (8-10 min)
 Confirm domain routing logic and cache behavior.
@@ -488,6 +601,7 @@ Before ending session, confirm:
 - [ ] Error log filtering performed.
 - [ ] Nginx syntax tested before reload.
 - [ ] Git deployment workflow completed (`status` -> `pull` -> verify).
+- [ ] Docker image deployment (Lab 5B) completed: build -> push -> pull -> run (optional).
 - [ ] DNS lookup commands executed.
 - [ ] UFW policy applied and reviewed.
 - [ ] Shutdown scheduling and cancellation tested.
@@ -525,6 +639,10 @@ Before ending session, confirm:
 8. `docker exec ... psql` fails with authentication error.
 - Cause: Wrong DB username/password/database name.
 - Fix: Use `ebright / ebright123 / ebright` as defined in `asset/module3/docker-compose.yml`.
+
+9. `docker push` fails with "denied" or "unauthorized".
+- Cause: Not logged in to the registry, or image tag does not match your registry/username.
+- Fix: Run `docker login` (e.g. for Docker Hub use your username and password or access token). Ensure the image tag matches this module standard: `docker.io/ebright-training/module3-portal:latest`.
 
 ## Extra Practice (Optional, 10 Minutes)
 1. Export key health metrics to a timestamped report:

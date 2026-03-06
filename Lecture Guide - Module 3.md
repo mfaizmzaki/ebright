@@ -4,13 +4,13 @@
 
 **Session Duration:** 2.5 to 3.5 hours  
 **Delivery Mode:** Instructor-led with guided terminal demos and scenario drills  
-**Tools:** Ubuntu Server (or Docker Ubuntu container), SSH access, Git, Nginx, UFW, terminal log access
+**Tools:** Ubuntu Server (or Docker Ubuntu container), SSH access, Git, Docker, Nginx, UFW, terminal log access
 
 ## Practical Alignment (Module 3)
 This lecture is designed to feed directly into `Practical Guide - Module 3.md`.
 
 - Lecture Sections 1 to 3 map to pre-deployment safety and diagnostics labs.
-- Lecture Sections 4 to 5 map to service management and Git deployment labs.
+- Lecture Sections 4 to 5 map to service management and Git/Docker deployment labs.
 - Lecture Sections 6 to 8 map to DNS, firewall, and continuity labs.
 
 Trainer note:
@@ -22,7 +22,7 @@ By the end of this module, learners should be able to:
 - Check disk, memory, CPU, and load health using core Linux diagnostics.
 - Investigate service failures using system, web server, and authentication logs.
 - Manage software packages and control services with `apt` and `systemctl`.
-- Perform safe Git-based deployment updates on a live server.
+- Perform safe Git-based and Docker image-based deployment updates on a live server.
 - Explain core DNS record types and propagation behavior for domain routing.
 - Apply baseline firewall hardening using UFW without locking out SSH access.
 - Describe continuity practices using the 3-2-1 backup model and controlled shutdown procedures.
@@ -40,13 +40,13 @@ Repeat these rules throughout delivery:
 - 10 minutes: Recap quiz from Module 2 + explain today's incident-first mindset.
 - 30 minutes: Snapshot/rollback discipline + health checks.
 - 35 minutes: Logs and root cause workflow.
-- 35 minutes: Nginx/package operations + Git deployment routine.
-- 20 minutes: DNS and UFW hardening sequence.
+- 45 minutes: Nginx/package operations + Git and Docker deployment routines.
+- 25 minutes: DNS and UFW hardening sequence.
 - 15 minutes: Continuity, shutdown drills, and exit ticket.
 
 ## Pre-Class Checklist
 - Confirm learners can SSH into the practice server.
-- Ensure `nginx`, `git`, and `ufw` are installed in the training environment.
+- Ensure `nginx`, `git`, `docker`, and `ufw` are installed in the training environment.
 - Prepare sample logs or a controlled error scenario for troubleshooting demo.
 - Confirm learners have a test domain example (`portal.ebright.edu.my`) for DNS discussion.
 - Prepare a rollback example (snapshot or documented restore point).
@@ -223,7 +223,9 @@ Success criteria:
 Trainer callout:
 - Teach `reload` for config-only changes and reserve `restart` for deeper recovery.
 
-## 5. Modern Deployment: Git Workflows
+## 5. Modern Deployment: Git and Docker Workflows
+
+Recommended section timing: 20 to 30 minutes (Git baseline + Docker extension).
 
 Modern teams deploy via Git instead of manual file uploads. This gives version history, traceability, and quick rollback options when updates fail.
 
@@ -233,6 +235,10 @@ Modern teams deploy via Git instead of manual file uploads. This gives version h
 - `git pull`: Update existing deployment with latest remote changes.
 - `git status`: Check local changes before pull to avoid conflicts.
 - `git log --oneline -n 5`: Review recent deployable history quickly.
+
+Quick collaboration note (branching):
+- Developers should create feature branches (for example `feature/login-fix`) and open Pull Requests for review before merge.
+- Deployment servers should pull from reviewed branches such as `main`/`release`, not directly from personal feature branches.
 
 ### 5.2 Guided Deployment Flow (12-15 min)
 
@@ -258,6 +264,56 @@ Rollback concept example:
 
 Success criteria:
 - Learners can explain the difference between first deployment (`clone`) and update deployment (`pull`).
+
+### 5.4 Docker Image-Based Deployment Model
+
+For stronger release consistency, teams often deploy Docker images instead of running `git pull` on production servers.
+
+Role split to emphasize:
+- **Developer side:** build image from source, tag, and push to registry.
+- **Server side:** pull approved image and run container (no source checkout required).
+
+Why this pattern is common:
+- Same artifact across environments (dev/staging/prod).
+- Faster rollback by switching image tag.
+- Less build complexity on production hosts.
+
+### 5.5 Guided Demo: Registry-Based Flow (8-10 min)
+
+Use the same training image naming convention as the practical:
+
+```bash
+# Developer side
+cd asset/module3/deploy
+docker build -t docker.io/ebright-training/module3-portal:latest .
+docker login
+docker push docker.io/ebright-training/module3-portal:latest
+
+# Server side
+docker pull docker.io/ebright-training/module3-portal:latest
+docker run -d --name ebright-portal -p 8888:80 docker.io/ebright-training/module3-portal:latest
+curl -I http://localhost:8888
+```
+
+Trainer callout:
+- The deployment server pulls a tested image artifact; it does not rebuild from source during release.
+
+### 5.6 Optional Offline Pattern: `docker save` + `scp` + `docker load`
+
+If registry access is restricted, transfer the image tarball manually:
+
+```bash
+# Developer side
+docker save -o module3-portal-latest.tar docker.io/ebright-training/module3-portal:latest
+scp module3-portal-latest.tar user@SERVER_IP:/tmp/
+
+# Server side
+docker load -i /tmp/module3-portal-latest.tar
+docker run -d --name ebright-portal -p 8888:80 docker.io/ebright-training/module3-portal:latest
+```
+
+Teaching point:
+- This keeps deployment artifact-based even without a registry.
 
 ## 6. Network Identity: DNS & Domain Routing
 
@@ -385,11 +441,12 @@ Extension drill:
 5. Why must port `22` be allowed before enabling UFW?
 6. What does TTL influence in DNS behavior?
 7. Explain the 3-2-1 backup rule in one sentence.
+8. In Docker-based deployment, why does the server run `docker pull` (or `docker load`) instead of `git pull`?
 
 ## Module 3 Summary
 - Safe operations begin with rollback planning using snapshots.
 - Stable applications depend on continuous resource monitoring and log-driven troubleshooting.
-- Deployment discipline combines package management, service control, and Git workflows.
+- Deployment discipline combines package management, service control, and Git/Docker artifact workflows.
 - Network reliability requires correct DNS records and propagation awareness.
 - Security and continuity are achieved through firewall hardening, backup strategy, and controlled maintenance operations.
 
