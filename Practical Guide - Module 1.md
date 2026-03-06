@@ -9,12 +9,12 @@
 ## Before You Start (Beginner Checklist)
 Use this checklist before running any command.
 
-- You are using Windows 10/11 with administrator access.
-- You have a stable internet connection.
-- You have Visual Studio Code installed.
-- You can open the VS Code integrated terminal.
-- Virtualization is enabled in BIOS/UEFI (required by Docker Desktop).
-- You have at least 8 GB RAM recommended for smoother Docker usage.
+- [ ] You are using Windows 10/11 with administrator access.
+- [ ] You have a stable internet connection.
+- [ ] You have Visual Studio Code installed.
+- [ ] You can open the VS Code integrated terminal.
+- [ ] Virtualization is enabled in BIOS/UEFI (required by Docker Desktop).
+- [ ] You have at least 8 GB RAM recommended for smoother Docker usage.
 
 If virtualization is disabled, Docker may fail to start.
 
