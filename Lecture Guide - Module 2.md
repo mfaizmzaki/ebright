@@ -6,6 +6,17 @@
 **Delivery Mode:** Instructor-led with guided terminal labs  
 **Tools:** Ubuntu Server (or Docker Ubuntu container), terminal, SSH access, text editor
 
+## Practical Alignment (Module 2)
+This lecture is designed to feed directly into `Practical Guide - Module 2.md`.
+
+- Lecture Sections 1 to 3 map to Practical Labs 1 to 3.
+- Lecture Sections 4 to 6 map to Practical Labs 4 to 6.
+- Lecture Sections 7 to 8 map to Practical Labs 7 to 8.
+- Keep examples consistent with `/opt/ebright_data` to reduce learner confusion.
+
+Trainer note:
+- When presenting examples, say the command purpose first, run second, and verify third.
+
 ## Learning Outcomes
 By the end of this module, learners should be able to:
 - Explain the Linux Filesystem Hierarchy (FHS) and identify core directories by role.
@@ -15,11 +26,27 @@ By the end of this module, learners should be able to:
 - Perform routine maintenance: disk checks, software updates, process checks, and connectivity tests.
 - Use terminal productivity features and basic scheduling with `crontab`.
 
+## Beginner Guardrails
+Use these rules repeatedly during delivery:
+
+- One command at a time, then pause for class output check.
+- Ask learners to read command intent before pressing Enter.
+- If output differs, normalize with `pwd` and `ls` before continuing.
+- Avoid destructive operations unless explicitly demonstrated.
+
 ## Pre-Class Checklist
 - Confirm Ubuntu shell access (local VM, cloud VPS, or Docker container).
 - Ensure learners can run commands with `sudo` privileges in the lab environment.
 - Prepare a practice folder (example: `/opt/ebright-lab/module2`).
 - Verify network tools are installed (`iproute2`, `net-tools`, `dnsutils`, `curl`, `wget`).
+
+Fast pre-flight commands for trainer:
+
+```bash
+whoami
+pwd
+ip a | head -n 10
+```
 
 ## 1. The Linux Filesystem Hierarchy (FHS)
 
@@ -52,6 +79,10 @@ ls -ld / /etc /var/log /var/www /home /opt /tmp
 Discussion points:
 - Which locations are user data vs system configuration?
 - Which paths should be changed carefully and why?
+
+Facilitator prompts:
+- "If you must edit one file for SSH settings, where do you usually look first?"
+- "If a service is failing, which directory helps you investigate first?"
 
 ## 2. Help, Documentation and System Information
 
@@ -88,6 +119,10 @@ whatis grep
 Success criteria:
 - Learners can identify the OS version and current account.
 - Learners can find command help using at least two documentation tools.
+
+Common confusion to address:
+- `man` gives deep detail; `--help` is a quick reminder.
+- `whatis` is useful when learners only remember command names vaguely.
 
 ## 3. Filesystem Operations: The Navigator's Kit
 
@@ -129,6 +164,13 @@ cp /opt/ebright-lab/module2/finance/budget-2026.txt /opt/ebright-lab/module2/hr/
 mv /opt/ebright-lab/module2/hr/budget-2026.txt /opt/ebright-lab/module2/hr/payroll-draft.txt
 ls -R /opt/ebright-lab/module2
 ```
+
+Success criteria:
+- Learners can explain the difference between copy (`cp`) and move/rename (`mv`).
+- Learners can confirm final file location without guesswork using `ls -R`.
+
+Facilitator rescue tip:
+- If learners lose track of location, run `pwd` then `cd /opt/ebright-lab/module2` to re-anchor.
 
 ## 4. Content Exploration, Editing and Archiving
 
@@ -176,6 +218,10 @@ tar -xvf /opt/ebright-lab/module2/content.tar -C /opt/ebright-lab/module2
 Success criteria:
 - Learners can inspect file content and filter errors using `grep`.
 - Learners can archive and restore a folder successfully.
+
+Facilitator prompts:
+- "Why inspect with `cat` or `tail` before editing configs?"
+- "Where was the tar archive created, and how can you prove it?"
 
 ## 5. Security Logic: Users, Groups and Permissions
 
@@ -226,6 +272,14 @@ Success criteria:
 - Learners can map user-to-group membership using `id`.
 - Learners can explain ownership and permission output from `ls -ld`.
 
+Mini teaching script for `770`:
+- Owner: full access.
+- Group: full access.
+- Others: no access.
+
+Common mistake:
+- Learners often run `chmod` before confirming ownership. Reinforce `chown` then `chmod` when setting department folders.
+
 ## 6. Terminal Productivity and Task Scheduling
 
 Professional administrators move fast and automate repetitive work.
@@ -268,6 +322,10 @@ Success criteria:
 - Learners can use piping/redirection confidently.
 - Learners can describe each cron field in the schedule expression.
 
+Beginner reminder:
+- `>` overwrites a file.
+- `>>` appends to a file.
+
 ## 7. Storage, Time and Software Management
 
 Servers require routine maintenance to remain healthy, accurate, and secure.
@@ -302,6 +360,9 @@ sudo apt list --upgradable
 Success criteria:
 - Learners can identify current disk pressure areas.
 - Learners can report timezone and pending package updates.
+
+Container caveat:
+- In Docker-based labs, `timedatectl` may be limited if systemd is unavailable. Treat it as a concept demo when required.
 
 ## 8. Process and Network Operations
 
@@ -351,6 +412,10 @@ Success criteria:
 - Learners can verify process health and basic network reachability.
 - Learners can distinguish between connectivity, DNS, and service-port checks.
 
+Facilitator prompts:
+- "If ping works but domain lookup fails, what is likely broken?"
+- "If DNS works but web app is down, which check comes next?"
+
 ## Mini Lab: Ebright Department Folder and Permission Setup
 1. Create users and group structure (lab-safe names):
 
@@ -387,6 +452,14 @@ Success criteria:
 3. Why is `tail -f` useful during troubleshooting?
 4. What does permission `770` mean in plain language?
 5. Which command safely grants admin rights to an existing user in Ubuntu?
+
+## Instructor Debrief Checklist
+Use this at session close:
+
+- Confirm every learner can explain `cp` vs `mv` in plain language.
+- Confirm every learner can read `ls -ld` permission strings at a basic level.
+- Confirm learners understand when to use `tail`, `grep`, and `crontab`.
+- Capture at least one learner-reported issue and discuss root cause publicly.
 
 ## Module 2 Summary
 - Linux filesystem literacy improves troubleshooting speed and reduces mistakes.

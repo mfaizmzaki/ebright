@@ -8,6 +8,12 @@ The Ebright Linux Crash Course is designed to equip the IT and Administration te
 
 Full detailed overview: [Training Overview](Training%20Overview.md)
 
+## Quick Guide Links
+- [Lecture Guide - Module 1](Lecture%20Guide%20-%20Module%201.md)
+- [Practical Guide - Module 1](Practical%20Guide%20-%20Module%201.md)
+- [Lecture Guide - Module 2](Lecture%20Guide%20-%20Module%202.md)
+- [Practical Guide - Module 2](Practical%20Guide%20-%20Module%202.md)
+
 ### Pillar 1: System Identity, Access & Administration
 - Focus: Establishing infrastructure foundations and organizational hierarchy.
 - Objective: Build a professional server mindset through CLI operations, VPS administration, SSH security, filesystem navigation, and role-based access controls for internal data protection.
@@ -45,8 +51,8 @@ Ebright IT & Administration Team
 | 09:00 - 09:45 | Lecture | [Module 1: Introduction, Fundamentals & Remote Access](Lecture%20Guide%20-%20Module%201.md) | Ecosystem (GUI vs CLI), Cloud/VPS theory, and SSH handshake/security. |
 | 09:45 - 10:30 | Practical | [Module 1: Introduction, Fundamentals & Remote Access](Practical%20Guide%20-%20Module%201.md) | Docker sandbox setup, system verification, and SSH key generation. |
 | 10:30 - 10:45 | Break | - | Morning coffee break. |
-| 10:45 - 12:00 | Lecture | Module 2: Mastering the Filesystem, Users & Permissions | The 8 core topics: FHS, security logic, productivity, and network operations. |
-| 12:00 - 13:00 | Practical | Module 2: Mastering the Filesystem, Users & Permissions | Hands-on: Building Ebright's hierarchy, permissions, and automation. |
+| 10:45 - 12:00 | Lecture | [Module 2: Mastering the Filesystem, Users & Permissions](Lecture%20Guide%20-%20Module%202.md) | The 8 core topics: FHS, security logic, productivity, and network operations. |
+| 12:00 - 13:00 | Practical | [Module 2: Mastering the Filesystem, Users & Permissions](Practical%20Guide%20-%20Module%202.md) | Hands-on: Building Ebright's hierarchy, permissions, and automation. |
 | 13:00 - 14:00 | Lunch | - | Networking lunch. |
 
 ## Pillar 2: Deployment, Security & Continuity
@@ -70,3 +76,4 @@ Ebright IT & Administration Team
 ## Instructor Notes
 - Practical Buffer: The Practical sessions include buffer time for students who may encounter Docker or SSH connectivity issues.
 - Quiz Integration: Short 5-minute knowledge checks (Quizzes) should be performed at the start of Module 2 and Module 3 to refresh concepts.
+- New Learner Flow: Module 2 now includes beginner checkpoints and troubleshooting patterns to improve classroom pacing and confidence.
