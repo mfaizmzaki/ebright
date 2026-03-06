@@ -1,0 +1,70 @@
+services:
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: ebright-m3-nginx
+    depends_on:
+      app:
+        condition: service_started
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped
+
+  app:
+    image: traefik/whoami:v1.10
+    container_name: ebright-m3-app
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    container_name: ebright-m3-postgres
+    environment:
+      POSTGRES_DB: ebright
+      POSTGRES_USER: ebright
+      POSTGRES_PASSWORD: ebright123
+    volumes:
+      - m3_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ebright -d ebright"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  cache:
+    image: redis:7-alpine
+    container_name: ebright-m3-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - m3_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  adminer:
+    image: adminer:4
+    container_name: ebright-m3-adminer
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8081:8080"
+    restart: unless-stopped
+
+  toolbox:
+    image: nicolaka/netshoot:latest
+    container_name: ebright-m3-toolbox
+    command: ["sleep", "infinity"]
+    profiles: ["tools"]
+
+volumes:
+  m3_postgres_data:
+  m3_redis_data:

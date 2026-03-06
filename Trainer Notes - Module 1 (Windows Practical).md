@@ -11,7 +11,7 @@ By the end of this practical session, learners should be able to:
 - Verify Linux kernel and shell basics.
 - Explain case sensitivity and Linux command feedback behavior.
 - Generate SSH key pairs on Windows and identify private/public keys.
-- Explain how a `Dockerfile` and `asset/docker-compose.yml` create a repeatable SSH training environment.
+- Explain how a `Dockerfile` and `asset/module1/docker-compose.yml` create a repeatable SSH training environment.
 - Start, verify, and stop a Compose service used for SSH testing.
 
 ## Suggested Session Timeline
@@ -134,12 +134,12 @@ Security emphasis:
 
 ### 7. Lab 5 Optional: Dockerfile + Compose SSH Lab (15 to 20 min)
 Trainer setup note:
-- This lab teaches image build (`Dockerfile`) and service orchestration (`asset/docker-compose.yml`) while validating SSH access.
+- This lab teaches image build (`Dockerfile`) and service orchestration (`asset/module1/docker-compose.yml`) while validating SSH access.
 
 Learner action (from project root):
 ```bash
-docker compose -f asset/docker-compose.yml up -d --build
-docker compose -f asset/docker-compose.yml ps
+docker compose -f asset/module1/docker-compose.yml up -d --build
+docker compose -f asset/module1/docker-compose.yml ps
 ```
 
 Expected outcome:
@@ -166,9 +166,9 @@ type $HOME\.ssh\id_rsa.pub
 
 Compose lifecycle drill:
 ```bash
-docker compose -f asset/docker-compose.yml stop
-docker compose -f asset/docker-compose.yml start
-docker compose -f asset/docker-compose.yml down
+docker compose -f asset/module1/docker-compose.yml stop
+docker compose -f asset/module1/docker-compose.yml start
+docker compose -f asset/module1/docker-compose.yml down
 ```
 
 Teaching cues:
@@ -180,8 +180,8 @@ Teaching cues:
 Learner action:
 ```bash
 exit
-docker compose -f asset/docker-compose.yml stop
-docker compose -f asset/docker-compose.yml down
+docker compose -f asset/module1/docker-compose.yml stop
+docker compose -f asset/module1/docker-compose.yml down
 ```
 
 Trainer note:
@@ -195,7 +195,7 @@ Trainer note:
 - Learner can run and explain `uname -sr` and `echo $SHELL`.
 - Learner confirms case-sensitive filename behavior.
 - Learner successfully generates SSH keys and identifies both files.
-- Learner can run `docker compose -f asset/docker-compose.yml up -d --build` and confirm service is `Up`.
+- Learner can run `docker compose -f asset/module1/docker-compose.yml up -d --build` and confirm service is `Up`.
 - Learner can SSH to `localhost:2222` successfully.
 
 ## Fast Troubleshooting Card (Instructor Use)
@@ -208,7 +208,7 @@ Trainer note:
 - Reboot and reopen Docker Desktop.
 
 3. Existing container name conflict
-- If using old flow, remove stale container; for new flow, use `docker compose -f asset/docker-compose.yml down` then `docker compose -f asset/docker-compose.yml up -d --build`.
+- If using old flow, remove stale container; for new flow, use `docker compose -f asset/module1/docker-compose.yml down` then `docker compose -f asset/module1/docker-compose.yml up -d --build`.
 
 4. SSH command not found
 - Use latest Windows 10/11 with OpenSSH Client feature enabled.
@@ -217,11 +217,11 @@ Trainer note:
 - Stop and rerun in VS Code terminal on Windows host.
 
 6. SSH connection refused on `localhost:2222`
-- Verify service status using `docker compose -f asset/docker-compose.yml ps`.
-- Rebuild and restart using `docker compose -f asset/docker-compose.yml up -d --build`.
+- Verify service status using `docker compose -f asset/module1/docker-compose.yml ps`.
+- Rebuild and restart using `docker compose -f asset/module1/docker-compose.yml up -d --build`.
 
 7. Learner runs Compose in wrong folder
-- Ensure terminal path is project root and use `-f asset/docker-compose.yml`.
+- Ensure terminal path is project root and use `-f asset/module1/docker-compose.yml`.
 
 ## Optional Extension (If Time Allows)
 - Show learners how to display public key content:
@@ -229,3 +229,4 @@ Trainer note:
 type $HOME\.ssh\id_rsa.pub
 ```
 - Explain this is the value typically copied into server `authorized_keys`.
+

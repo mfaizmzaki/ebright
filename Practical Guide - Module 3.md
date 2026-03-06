@@ -331,6 +331,113 @@ Verification:
 Important:
 - Do not leave a scheduled shutdown active in classroom environment.
 
+## Lab 9: Extra Lab - Comprehensive Docker Compose Stack (Nginx + Essential Tools) (20-25 min)
+This extra lab gives learners a safe, local simulation of a mini production stack using Docker Compose.
+
+Stack components:
+- `nginx`: reverse proxy entry point on `http://localhost:8080`
+- `app`: demo upstream service (`whoami`)
+- `db`: PostgreSQL database
+- `cache`: Redis cache
+- `adminer`: database web UI on `http://localhost:8081`
+- `toolbox` (optional profile): network troubleshooting container
+
+### Task 9.1: Start the Stack
+Run from repository root (`ebright` folder):
+
+```bash
+docker compose -f asset/module3/docker-compose.yml up -d
+```
+
+Verification:
+
+```bash
+docker compose -f asset/module3/docker-compose.yml ps
+```
+
+Expected:
+- `nginx`, `app`, `db`, `cache`, `adminer` should be `Up`.
+- Port mapping should show `8080` for nginx and `8081` for adminer.
+
+### Task 9.2: Validate Nginx Routing and Health Endpoint
+
+```bash
+curl -I http://localhost:8080
+curl http://localhost:8080/healthz
+curl http://localhost:8080 | head -n 5
+```
+
+Expected:
+- `/healthz` returns `ok`.
+- Root route returns `whoami` response content via Nginx reverse proxy.
+
+### Task 9.3: Check Service Logs and Health
+
+```bash
+docker compose -f asset/module3/docker-compose.yml logs nginx --tail=40
+docker compose -f asset/module3/docker-compose.yml logs db --tail=40
+docker compose -f asset/module3/docker-compose.yml logs cache --tail=40
+```
+
+Checkpoint:
+- You can identify one normal startup line for Postgres and Redis.
+
+### Task 9.4: Connect to PostgreSQL from Inside the DB Container
+
+```bash
+docker exec -it ebright-m3-postgres psql -U ebright -d ebright -c "SELECT now();"
+```
+
+Expected:
+- Query returns current timestamp.
+
+### Task 9.5: Validate Redis Connectivity
+
+```bash
+docker exec -it ebright-m3-redis redis-cli ping
+```
+
+Expected:
+- Output: `PONG`
+
+### Task 9.6: Optional Toolbox for Network Diagnostics
+Start optional troubleshooting container profile:
+
+```bash
+docker compose -f asset/module3/docker-compose.yml --profile tools up -d
+docker exec -it ebright-m3-toolbox sh -c "dig nginx +short; nc -zv db 5432; nc -zv cache 6379"
+```
+
+Expected:
+- Internal DNS resolves service names.
+- Port checks to db/cache succeed.
+
+### Task 9.7: Controlled Restart and Recovery Drill
+
+```bash
+docker compose -f asset/module3/docker-compose.yml restart nginx
+docker compose -f asset/module3/docker-compose.yml ps
+curl -I http://localhost:8080
+```
+
+Checkpoint:
+- Service recovers and HTTP response is available again.
+
+### Task 9.8: Cleanup
+
+```bash
+docker compose -f asset/module3/docker-compose.yml down
+```
+
+Optional full reset (removes volumes/data):
+
+```bash
+docker compose -f asset/module3/docker-compose.yml down -v
+```
+
+Trainer note:
+- Use `down -v` only when intentionally resetting database/cache data.
+
 ## Mini Incident Drill (Optional, 10 min)
 Scenario: Website reports `502 Bad Gateway`.
 
@@ -384,6 +491,7 @@ Before ending session, confirm:
 - [ ] DNS lookup commands executed.
 - [ ] UFW policy applied and reviewed.
 - [ ] Shutdown scheduling and cancellation tested.
+- [ ] Docker Compose extra lab completed (Nginx + db + cache + tools).
 
 ## Troubleshooting (Common Beginner Issues)
 1. `systemctl` fails with "System has not been booted with systemd".
@@ -409,6 +517,14 @@ Before ending session, confirm:
 6. Lost SSH access after firewall update.
 - Cause: Port 22 was not allowed before enable.
 - Fix: Use cloud console emergency access, add `ufw allow 22`, then review rules.
+
+7. Docker Compose stack starts but `curl http://localhost:8080` fails.
+- Cause: Nginx container not healthy yet or port 8080 is already used.
+- Fix: Check `docker compose ... ps`, inspect `logs nginx`, or free port 8080.
+
+8. `docker exec ... psql` fails with authentication error.
+- Cause: Wrong DB username/password/database name.
+- Fix: Use `ebright / ebright123 / ebright` as defined in `asset/module3/docker-compose.yml`.
 
 ## Extra Practice (Optional, 10 Minutes)
 1. Export key health metrics to a timestamped report:

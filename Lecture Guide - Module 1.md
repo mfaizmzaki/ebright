@@ -148,17 +148,17 @@ This topic clarifies where to practice safely and how to choose the right isolat
 ### 4.4 Demo Commands
 
 ```bash
-docker compose -f asset/docker-compose.yml up -d --build
-docker compose -f asset/docker-compose.yml ps
+docker compose -f asset/module1/docker-compose.yml up -d --build
+docker compose -f asset/module1/docker-compose.yml ps
 docker exec -it ebright-practice-ssh bash
 cat /etc/os-release
 exit
-docker compose -f asset/docker-compose.yml down
+docker compose -f asset/module1/docker-compose.yml down
 ```
 
 Talking points:
 - `Dockerfile` defines the image build instructions.
-- `asset/docker-compose.yml` defines runtime configuration like ports and service names.
+- `asset/module1/docker-compose.yml` defines runtime configuration like ports and service names.
 - Compose improves consistency for classroom labs compared to one-off commands.
 
 ## 5. Remote Access Theory: SSH & Security Protocols
@@ -261,3 +261,4 @@ Success criteria:
 - Dockerfile and Docker Compose make sandbox setup repeatable and team-friendly.
 - SSH with key-based auth is foundational for secure remote operations.
 - A strong server mindset is careful, minimal, and documented.
+

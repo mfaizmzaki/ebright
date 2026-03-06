@@ -217,10 +217,10 @@ Important notes:
 
 ### Task 5.1: Understand the Project Files
 This repo now includes:
-- `asset/Dockerfile`: builds an Ubuntu image with SSH enabled.
-- `asset/docker-compose.yml`: starts the container and maps `localhost:2222` to container port `22`.
+- `asset/module1/Dockerfile`: builds an Ubuntu image with SSH enabled.
+- `asset/module1/docker-compose.yml`: starts the container and maps `localhost:2222` to container port `22`.
 
-Open `asset/Dockerfile` and note:
+Open `asset/module1/Dockerfile` and note:
 - `openssh-server` is installed.
 - A user named `trainee` is created.
 - Password login is enabled for training.
@@ -230,17 +230,17 @@ Open `asset/Dockerfile` and note:
 In VS Code terminal (from project root), run:
 
 ```bash
-docker compose -f asset/docker-compose.yml up -d --build
+docker compose -f asset/module1/docker-compose.yml up -d --build
 ```
 
 Why this matters:
-- `--build` builds the image from `asset/Dockerfile`.
-- Compose reads `asset/docker-compose.yml` and applies consistent settings.
+- `--build` builds the image from `asset/module1/Dockerfile`.
+- Compose reads `asset/module1/docker-compose.yml` and applies consistent settings.
 
 Verification:
 
 ```bash
-docker compose -f asset/docker-compose.yml ps
+docker compose -f asset/module1/docker-compose.yml ps
 ```
 
 Expected result:
@@ -298,9 +298,9 @@ If your key is loaded and recognized, login should work without password prompt.
 Run these commands to understand service lifecycle:
 
 ```bash
-docker compose -f asset/docker-compose.yml stop
-docker compose -f asset/docker-compose.yml start
-docker compose -f asset/docker-compose.yml down
+docker compose -f asset/module1/docker-compose.yml stop
+docker compose -f asset/module1/docker-compose.yml start
+docker compose -f asset/module1/docker-compose.yml down
 ```
 
 What each command does:
@@ -310,9 +310,9 @@ What each command does:
 
 ## Lab Summary and Cleanup
 - To exit the Sandbox: `exit`
-- To start services with Compose: `docker compose -f asset/docker-compose.yml up -d`
-- To stop services without removing: `docker compose -f asset/docker-compose.yml stop`
-- To remove all Compose resources: `docker compose -f asset/docker-compose.yml down`
+- To start services with Compose: `docker compose -f asset/module1/docker-compose.yml up -d`
+- To stop services without removing: `docker compose -f asset/module1/docker-compose.yml stop`
+- To remove all Compose resources: `docker compose -f asset/module1/docker-compose.yml down`
 
 ## Troubleshooting (Common Beginner Issues)
 1. `docker: command not found` in terminal.
@@ -337,7 +337,7 @@ What each command does:
 
 6. SSH connection refused on `localhost:2222`.
 - Cause: Compose service is not running, port mapping failed, or build did not complete.
-- Fix: Run `docker compose -f asset/docker-compose.yml up -d --build`, then check `docker compose -f asset/docker-compose.yml ps`.
+- Fix: Run `docker compose -f asset/module1/docker-compose.yml up -d --build`, then check `docker compose -f asset/module1/docker-compose.yml ps`.
 
 ## Troubleshooting: If Docker Desktop Fails to Start
 Common issues for Windows users are often related to system settings called virtualization.
@@ -383,3 +383,4 @@ After update completes:
 - Kernel and shell verified.
 - Case sensitivity and no-feedback rules practiced.
 - SSH key pair generated and identified.
+

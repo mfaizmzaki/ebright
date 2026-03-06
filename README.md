@@ -16,6 +16,10 @@ Full detailed overview: [Training Overview](Training%20Overview.md)
 - [Lecture Guide - Module 3](Lecture%20Guide%20-%20Module%203.md)
 - [Practical Guide - Module 3](Practical%20Guide%20-%20Module%203.md)
 
+## Module 3 Lab Assets
+- Docker Compose stack files for the extra lab are in `asset/module3/`.
+- Main compose file: `asset/module3/docker-compose.yml`.
+
 ## First 2 Minutes Setup (VS Code)
 1. Open Visual Studio Code.
 2. Open terminal in VS Code: `Terminal > New Terminal`.
@@ -74,7 +78,7 @@ Ebright IT & Administration Team
 | Time | Session Type | Module | Key Focus |
 | --- | --- | --- | --- |
 | 09:00 - 09:45 | Lecture | [Module 1: Introduction, Fundamentals & Remote Access](Lecture%20Guide%20-%20Module%201.md) | Ecosystem (GUI vs CLI), Cloud/VPS theory, and SSH handshake/security. |
-| 09:45 - 10:30 | Practical | [Module 1: Introduction, Fundamentals & Remote Access](Practical%20Guide%20-%20Module%201.md) | Docker sandbox setup using `asset/Dockerfile` + `asset/docker-compose.yml`, system verification, and SSH key generation/testing. |
+| 09:45 - 10:30 | Practical | [Module 1: Introduction, Fundamentals & Remote Access](Practical%20Guide%20-%20Module%201.md) | Docker sandbox setup using `asset/module1/Dockerfile` + `asset/module1/docker-compose.yml`, system verification, and SSH key generation/testing. |
 | 10:30 - 10:45 | Break | - | Morning coffee break. |
 | 10:45 - 12:00 | Lecture | [Module 2: Mastering the Filesystem, Users & Permissions](Lecture%20Guide%20-%20Module%202.md) | The 8 core topics: FHS, security logic, productivity, and network operations. |
 | 12:00 - 13:00 | Practical | [Module 2: Mastering the Filesystem, Users & Permissions](Practical%20Guide%20-%20Module%202.md) | Hands-on: Building Ebright's hierarchy, permissions, and automation. |
@@ -102,3 +106,4 @@ Ebright IT & Administration Team
 - Practical Buffer: The Practical sessions include buffer time for students who may encounter Docker or SSH connectivity issues.
 - Quiz Integration: Short 5-minute knowledge checks (Quizzes) should be performed at the start of Module 2 and Module 3 to refresh concepts.
 - New Learner Flow: Module 2 now includes beginner checkpoints and troubleshooting patterns to improve classroom pacing and confidence.
+
