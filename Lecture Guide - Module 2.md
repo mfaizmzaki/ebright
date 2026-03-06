@@ -42,7 +42,7 @@ These locations are where the daily life of the server happens, housing website 
 - `/opt`: The guest room. Optional software or custom Ebright repositories.
 - `/tmp`: Temporary files, often cleared during reboot cycles.
 
-### 1.3 Quick Mapping Exercise (5 min)
+### 1.3 Guided Practice (5-8 min)
 Ask learners to run:
 
 ```bash
@@ -73,14 +73,21 @@ Before making changes, identify your environment and account context.
 - `hostname`: Current server name.
 - `whoami`: Current logged-in user.
 
-### 2.3 Instructor Demo (5-10 min)
+### 2.3 Guided Practice (8-10 min)
 
 ```bash
 uname -a
 lsb_release -a
 hostname
 whoami
+man ls
+ls --help | head -n 10
+whatis grep
 ```
+
+Success criteria:
+- Learners can identify the OS version and current account.
+- Learners can find command help using at least two documentation tools.
 
 ## 3. Filesystem Operations: The Navigator's Kit
 
@@ -151,6 +158,25 @@ Archiving bundles files for transport and backup; compression reduces storage us
 - `gzip [file]`: Compress file.
 - `gunzip [file].gz`: Decompress file.
 
+### 4.4 Guided Practice (12-15 min)
+
+```bash
+mkdir -p /opt/ebright-lab/module2/content
+echo "Portal check OK" > /opt/ebright-lab/module2/content/status.log
+echo "ERROR: timeout" >> /opt/ebright-lab/module2/content/status.log
+cat /opt/ebright-lab/module2/content/status.log
+grep ERROR /opt/ebright-lab/module2/content/status.log
+tar -cvf /opt/ebright-lab/module2/content.tar /opt/ebright-lab/module2/content
+gzip /opt/ebright-lab/module2/content.tar
+ls -lh /opt/ebright-lab/module2/content.tar.gz
+gunzip /opt/ebright-lab/module2/content.tar.gz
+tar -xvf /opt/ebright-lab/module2/content.tar -C /opt/ebright-lab/module2
+```
+
+Success criteria:
+- Learners can inspect file content and filter errors using `grep`.
+- Learners can archive and restore a folder successfully.
+
 ## 5. Security Logic: Users, Groups and Permissions
 
 Linux is a multi-user operating system. Security follows least privilege: users only get access required for their role.
@@ -183,6 +209,23 @@ Use administrative access only for trusted staff.
 - `usermod -aG sudo [user]`: Add existing user to `sudo` group.
 - `visudo`: Safest method to edit `/etc/sudoers`.
 
+### 5.5 Guided Practice (12-15 min)
+
+```bash
+sudo groupadd registrar
+sudo useradd -m lina_registrar
+sudo usermod -aG registrar lina_registrar
+sudo mkdir -p /opt/ebright-lab/module2/registrar
+sudo chown root:registrar /opt/ebright-lab/module2/registrar
+sudo chmod 770 /opt/ebright-lab/module2/registrar
+id lina_registrar
+ls -ld /opt/ebright-lab/module2/registrar
+```
+
+Success criteria:
+- Learners can map user-to-group membership using `id`.
+- Learners can explain ownership and permission output from `ls -ld`.
+
 ## 6. Terminal Productivity and Task Scheduling
 
 Professional administrators move fast and automate repetitive work.
@@ -208,6 +251,23 @@ Professional administrators move fast and automate repetitive work.
 - Syntax: `min hour day month weekday command`.
 - Example: `0 0 * * *` runs daily at midnight.
 
+### 6.5 Guided Practice (8-12 min)
+
+```bash
+history | tail -n 10
+echo "disk snapshot" | tee /tmp/ops-note.txt
+df -h | tee -a /tmp/ops-note.txt
+cat /tmp/ops-note.txt
+crontab -l
+```
+
+Practice task:
+- Add one cron entry to run `df -h >> /tmp/disk-daily.log` every day at 23:30.
+
+Success criteria:
+- Learners can use piping/redirection confidently.
+- Learners can describe each cron field in the schedule expression.
+
 ## 7. Storage, Time and Software Management
 
 Servers require routine maintenance to remain healthy, accurate, and secure.
@@ -227,6 +287,21 @@ Servers require routine maintenance to remain healthy, accurate, and secure.
 - `sudo apt install [pkg]`: Install software.
 - `sudo apt upgrade`: Upgrade installed packages.
 - `sudo apt remove [pkg]`: Remove installed software.
+
+### 7.4 Guided Practice (10-12 min)
+
+```bash
+df -h
+du -sh /var/log
+date
+timedatectl
+sudo apt update
+sudo apt list --upgradable
+```
+
+Success criteria:
+- Learners can identify current disk pressure areas.
+- Learners can report timezone and pending package updates.
 
 ## 8. Process and Network Operations
 
@@ -256,6 +331,25 @@ This final section covers runtime visibility and connectivity checks that are cr
 - `poweroff`: Shut down and power off.
 - `reboot`: Restart system.
 - `shutdown now`: Immediate shutdown.
+
+### 8.5 Guided Practice (12-15 min)
+
+```bash
+ps aux | head -n 5
+top -b -n 1 | head -n 12
+ip a
+ping -c 4 8.8.8.8
+nslookup ubuntu.com
+ss -tuln | head -n 10
+ssh -V
+```
+
+Safety note:
+- Do not run `halt`, `poweroff`, `reboot`, or `shutdown now` during shared classroom sessions unless instructed by the trainer.
+
+Success criteria:
+- Learners can verify process health and basic network reachability.
+- Learners can distinguish between connectivity, DNS, and service-port checks.
 
 ## Mini Lab: Ebright Department Folder and Permission Setup
 1. Create users and group structure (lab-safe names):
